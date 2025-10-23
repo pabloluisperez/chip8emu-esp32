@@ -1,0 +1,169 @@
+# Directorios de build
+build/
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# Dependencias vendored
+vendored/
+
+# Archivos compilados
+*.exe
+*.out
+*.app
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.o
+*.obj
+*.bin
+*.elf
+*.hex
+
+# CMake
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+_deps/
+
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+ipch/
+x64/
+x86/
+Debug/
+Release/
+RelWithDebInfo/
+MinSizeRel/
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+.clang_complete
+.gcc-flags.json
+platformio_override.ini
+
+# Clang
+.clangd/
+compile_commands.json
+.cache/
+
+# IDE - JetBrains
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sistema operativo
+## Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+## macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+## Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# Logs y bases de datos
+*.log
+*.sql
+*.sqlite
+*.db
+
+# Archivos temporales
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.*.swp
+
+# Archivos de depuración
+*.pdb
+*.ilk
+*.map
+*.dmp
+
+# Copias de seguridad
+*.bak
+*.backup
+*.old
+
+# Archivos de configuración local
+local.properties
+.env
+.env.local
+
+# Documentación generada
+docs/_build/
+site/
+
+# Python (si usas scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Node modules (si usas herramientas Node)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Tags y CTags
+tags
+TAGS
+.tags
+.TAGS
+
+# Cobertura de código
+*.gcov
+*.gcda
+*.gcno
+coverage/
+*.coverage
+
+# Otros
+*.stackdump
+.gdb_history
