@@ -74,7 +74,13 @@ L_216:
   0x216:  6060  LD   V0, 0x60
   0x218:  F015  LD   DT, V0
   0x21A:  121A  JP   L_21A
+
+; ===== DATA SECTION (Sprites / Constants) =====
+  0x22A:  FF00  .BYTE 0xFF, 0x00  ; 11111111 00000000
+  0x22C:  3C00  .BYTE 0x3C, 0x00  ; 00111100 00000000
 ```
+
+El desensamblador **detecta automáticamente** secciones de datos después de saltos infinitos y las muestra en formato binario (útil para visualizar sprites).
 
 ---
 
@@ -172,7 +178,22 @@ python tools/rom_to_array.py roms/tetris.ch8 > include/lilygo/tetris_rom.h
 - Python 3.6 o superior
 - No requiere dependencias externas
 
-## 📝 Notas
+## 📝 Notas importantes
+
+### Instrucciones vs Datos
+
+- **Las ROMs mezclan código y datos**: Después del código ejecutable, las ROMs suelen contener sprites y constantes
+- **El desensamblador detecta automáticamente** secciones de datos después de saltos infinitos (`JP addr` a sí mismo)
+- **Formato binario en datos**: Los sprites se muestran en binario para facilitar su visualización
+
+### Sobre la instrucción SYS (0x0NNN)
+
+- **SYS es obsoleta**: Era específica del hardware RCA 1802 original (años 70)
+- **Los emuladores modernos la ignoran**: Solo `0x00E0` (CLS) y `0x00EE` (RET) son relevantes
+- **No la verás en ROMs modernas**: Las ROMs actuales nunca usan SYS
+- **Si aparece en el desensamblado**: Probablemente son datos de sprites mal interpretados como código
+
+### Especificaciones técnicas
 
 - Las ROMs de CHIP-8 comienzan en la dirección `0x200`
 - Los primeros 512 bytes (`0x000-0x1FF`) están reservados para el intérprete

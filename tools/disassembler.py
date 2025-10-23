@@ -135,12 +135,42 @@ class Chip8Disassembler:
             addr += 2
             i += 2
     
+    def detect_unreachable_code(self, data: bytes, start_addr: int = 0x200) -> set:
+        """
+        Detecta código inalcanzable después de saltos incondicionales infinitos
+        """
+        unreachable = set()
+        addr = start_addr
+        i = 0
+        
+        while i < len(data) - 1:
+            opcode = (data[i] << 8) | data[i + 1]
+            
+            # Detectar salto infinito a sí mismo (JP addr donde addr == dirección actual)
+            if (opcode & 0xF000) == 0x1000:  # JP
+                target = opcode & 0x0FFF
+                if target == addr:
+                    # Todo después de este salto es inalcanzable (probablemente datos)
+                    unreachable_start = addr + 2
+                    for unreachable_addr in range(unreachable_start, start_addr + len(data), 2):
+                        unreachable.add(unreachable_addr)
+                    break
+            
+            addr += 2
+            i += 2
+        
+        return unreachable
+    
     def disassemble(self, data: bytes, start_addr: int = 0x200) -> List[str]:
         """
         Desensambla la ROM y retorna líneas de código ensamblador
         """
         # Primera pasada para identificar etiquetas
         self.first_pass(data, start_addr)
+        
+        # Detectar código inalcanzable (probablemente datos)
+        unreachable = self.detect_unreachable_code(data, start_addr)
+        in_data_section = False
         
         lines = []
         lines.append("; CHIP-8 Disassembly")
@@ -159,19 +189,36 @@ class Chip8Disassembler:
         
         while i < len(data) - 1:
             opcode = (data[i] << 8) | data[i + 1]
-            mnemonic, target = self.decode_instruction(opcode, addr)
             
             # Si esta dirección tiene una etiqueta, mostrarla
             if addr in self.labels:
                 lines.append("")
                 lines.append(f"{self.labels[addr]}:")
             
-            # Si el mnemónico hace referencia a una etiqueta, reemplazar dirección
-            if target is not None and target in self.labels:
-                mnemonic = mnemonic.replace(f"0x{target:03X}", self.labels[target])
+            # Marcar inicio de sección de datos
+            if addr in unreachable and not in_data_section:
+                lines.append("")
+                lines.append("; ===== DATA SECTION (Sprites / Constants) =====")
+                in_data_section = True
             
-            # Formatear línea: dirección | bytes | mnemónico
-            line = f"  0x{addr:03X}:  {opcode:04X}  {mnemonic}"
+            # Si estamos en sección de datos, mostrar como bytes
+            if in_data_section:
+                # Mostrar como datos hexadecimales y binarios (útil para sprites)
+                byte1 = data[i]
+                byte2 = data[i + 1]
+                binary1 = f"{byte1:08b}"
+                binary2 = f"{byte2:08b}"
+                line = f"  0x{addr:03X}:  {opcode:04X}  .BYTE 0x{byte1:02X}, 0x{byte2:02X}  ; {binary1} {binary2}"
+            else:
+                mnemonic, target = self.decode_instruction(opcode, addr)
+                
+                # Si el mnemónico hace referencia a una etiqueta, reemplazar dirección
+                if target is not None and target in self.labels:
+                    mnemonic = mnemonic.replace(f"0x{target:03X}", self.labels[target])
+                
+                # Formatear línea: dirección | bytes | mnemónico
+                line = f"  0x{addr:03X}:  {opcode:04X}  {mnemonic}"
+            
             lines.append(line)
             
             addr += 2
@@ -179,7 +226,7 @@ class Chip8Disassembler:
         
         # Si hay un byte impar al final
         if len(data) % 2 == 1:
-            lines.append(f"  0x{addr:03X}:  {data[-1]:02X}    DATA 0x{data[-1]:02X}")
+            lines.append(f"  0x{addr:03X}:  {data[-1]:02X}    .BYTE 0x{data[-1]:02X}")
         
         return lines
     

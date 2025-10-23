@@ -20,7 +20,7 @@ L_200:
   0x20E:  0000  SYS  0x000
   0x210:  F090  DATA 0xF090
   0x212:  9090  SNE  V0, V9
-  0x214:  F0    DATA 0xF0
+  0x214:  F0    .BYTE 0xF0
 
 ; ===== Instruction Reference =====
 ; CLS             - Clear screen
