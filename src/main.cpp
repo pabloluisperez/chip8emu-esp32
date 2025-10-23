@@ -123,10 +123,17 @@ int main(int argc, char* argv[]) {
     if (argc < 2) {
         std::cout << "Uso: " << argv[0] << " <archivo_rom>" << std::endl;
         std::cout << "Ejemplo: " << argv[0] << " roms/pong.ch8" << std::endl;
+        std::cout << "\nPresiona Enter para salir...";
+        std::cin.get();
         return 1;
     }
     
     std::string romPath = argv[1];
+    
+    std::cout << "==================================" << std::endl;
+    std::cout << "   Emulador CHIP-8 para SDL3" << std::endl;
+    std::cout << "==================================" << std::endl;
+    std::cout << "Ruta de ROM: " << romPath << std::endl;
     
     // Cargar configuración de teclas
     Config& config = Config::getInstance();
@@ -138,17 +145,32 @@ int main(int argc, char* argv[]) {
     SDLAudio audio;
     SDLPlatform platform(display, input, audio);
     
+    std::cout << "Inicializando SDL..." << std::endl;
+    
     // Inicializar plataforma
     if (!platform.init()) {
-        std::cerr << "Error al inicializar la plataforma SDL" << std::endl;
+        std::cerr << "\n[ERROR] Error al inicializar la plataforma SDL" << std::endl;
+        std::cerr << "Posibles causas:" << std::endl;
+        std::cerr << "  - Las DLLs de SDL3 no estan en la ruta del ejecutable" << std::endl;
+        std::cerr << "  - No se puede crear una ventana (driver de video)" << std::endl;
+        std::cout << "\nPresiona Enter para salir...";
+        std::cin.get();
         return 1;
     }
+    
+    std::cout << "SDL inicializado correctamente" << std::endl;
     
     // Crear emulador
     Chip8 chip8(display, input, audio);
     
+    std::cout << "Cargando ROM..." << std::endl;
+    
     // Cargar ROM
     if (!chip8.loadROM(romPath)) {
+        std::cout << "\n[ERROR] No se pudo cargar la ROM" << std::endl;
+        std::cout << "Verifica que el archivo existe y la ruta es correcta" << std::endl;
+        std::cout << "\nPresiona Enter para salir...";
+        std::cin.get();
         platform.shutdown();
         return 1;
     }
